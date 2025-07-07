@@ -4,7 +4,7 @@ import { TextInput, Button, Text, HelperText } from 'react-native-paper';
 import { styles } from './styles';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../../../route-types';
+import { RootStackParamList } from '../../../route-types';
 import { LoadingOverlay } from '../../components/loading-overlay';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -38,7 +38,7 @@ export default function Login() {
       <LoadingOverlay visible={loading} />
 
       <Image
-        source={require('../../../../assets/logotipo.png')}
+        source={require('../../../assets/logotipo.png')}
         style={styles.logo}
         resizeMode="contain"
       />

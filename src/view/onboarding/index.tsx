@@ -8,7 +8,7 @@ export default function Onboarding({ navigation }: any) {
     <View style={styles.container}>
       {/* Pizza Image */}
       <Image
-        source={require('../../../../assets/pizza.png')}
+        source={require('../../../assets/pizza.png')}
         style={styles.image}
       />
       

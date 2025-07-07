@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {FlatList, Image, View} from 'react-native';
 import {Card, Text, TextInput} from 'react-native-paper';
 import {styles} from './styles';
-import {products} from "../../../model/products";
+import {products} from "../../model/products";
 
 export default function MenuList() {
   const [busca, setBusca] = useState('');
