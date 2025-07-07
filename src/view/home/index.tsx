@@ -4,7 +4,7 @@ import { Button, Title } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { styles } from './styles';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../../../route-types';
+import { RootStackParamList } from '../../../route-types';
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 

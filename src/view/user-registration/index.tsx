@@ -4,7 +4,7 @@ import { TextInput, Button, Text, Menu, Divider, HelperText } from 'react-native
 import { styles } from './styles';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
-import { LoadingOverlay } from '../../components/loading-overlay';
+import { LoadingOverlay } from '../../components/loading-overlay/index';
 
 const validationSchema = Yup.object().shape({
     name: Yup.string().min(6, 'Mínimo 6 caracteres').required('Informe o nome'),

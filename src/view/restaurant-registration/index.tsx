@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, ScrollView, Alert } from 'react-native';
 import { TextInput, Button, Text, HelperText } from 'react-native-paper';
 import { MaskedTextInput } from 'react-native-mask-text';
@@ -8,6 +8,7 @@ import * as Yup from 'yup';
 import { Formik } from 'formik';
 import { LoadingOverlay } from '../../components/loading-overlay';
 import debounce from 'lodash.debounce';
+import { useCep } from '../hooks/use-cep';
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().min(6, 'Mínimo 6 caracteres').required('Informe o nome'),
@@ -29,6 +30,7 @@ const brazilianStates = [
 
 export default function RestaurantRegistration() {
   const [loading, setLoading] = useState(false);
+  const { address, loading: cepLoading, error: cepError, fetchAddress, clearError } = useCep();
 
   const handleSalvar = (values: any) => {
     setLoading(true);
@@ -38,6 +40,17 @@ export default function RestaurantRegistration() {
       Alert.alert('Sucesso', 'Restaurante cadastrado com sucesso!');
     }, 2000);
   };
+
+  // Debounced CEP fetch function
+  const debouncedFetchCep = React.useMemo(
+    () =>
+      debounce((cep: string) => {
+        if (cep && cep.replace(/\D/g, '').length === 8) {
+          fetchAddress(cep);
+        }
+      }, 800),
+    [fetchAddress]
+  );
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -56,9 +69,27 @@ export default function RestaurantRegistration() {
               }, 300),
             [setFieldValue]
           );
+          
           const handleSelect = (value: string) => {
             setFieldValue('uf', value);
           };
+
+          // Handle CEP change
+          const handleCepChange = (cep: string) => {
+            handleChange('cep')(cep);
+            debouncedFetchCep(cep);
+            clearError();
+          };
+
+          // Auto-fill address fields when address data is available
+          useEffect(() => {
+            if (address) {
+              setFieldValue('street', address.street);
+              setFieldValue('district', address.district);
+              setFieldValue('city', address.city);
+              setFieldValue('uf', address.uf);
+            }
+          }, [address, setFieldValue]);
           return <>
             <TextInput
               label="Nome do Restaurante"
@@ -78,15 +109,21 @@ export default function RestaurantRegistration() {
             <TextInput
               label="CEP"
               value={values.cep}
-              onChangeText={handleChange('cep')}
+              onChangeText={handleCepChange}
               onBlur={handleBlur('cep')}
               mode="outlined"
               keyboardType="numeric"
-              error={touched.cep && !!errors.cep}
+              error={(touched.cep && !!errors.cep) || !!cepError}
+              right={cepLoading ? <TextInput.Icon icon="loading" /> : undefined}
             />
-            <HelperText type="error" visible={touched.cep && !!errors.cep}>
-              {touched.cep && errors.cep}
+            <HelperText type="error" visible={(touched.cep && !!errors.cep) || !!cepError}>
+              {(touched.cep && errors.cep) || cepError}
             </HelperText>
+            {address && (
+              <HelperText type="info">
+                Endereço encontrado! Os campos foram preenchidos automaticamente.
+              </HelperText>
+            )}
 
             <TextInput
               label="Rua"
@@ -95,7 +132,7 @@ export default function RestaurantRegistration() {
               onBlur={handleBlur('street')}
               mode="outlined"
               error={touched.street && !!errors.street}
-              disabled={true}
+              disabled={!address}
             />
             <HelperText type="error" visible={touched.street && !!errors.street}>
               {touched.street && errors.street}
@@ -121,7 +158,7 @@ export default function RestaurantRegistration() {
               onBlur={handleBlur('district')}
               mode="outlined"
               error={touched.district && !!errors.district}
-              disabled={true}
+              disabled={!address}
             />
             <HelperText type="error" visible={touched.district && !!errors.district}>
               {touched.district && errors.district}
@@ -134,7 +171,7 @@ export default function RestaurantRegistration() {
               onBlur={handleBlur('city')}
               mode="outlined"
               error={touched.city && !!errors.city}
-              disabled={true}
+              disabled={!address}
             />
             <HelperText type="error" visible={touched.city && !!errors.city}>
               {touched.city && errors.city}
@@ -146,7 +183,7 @@ export default function RestaurantRegistration() {
                 selectedValue={values.uf}
                 onValueChange={(value) => handleSelect(value)}
                 style={styles.picker}
-                enabled={false}
+                enabled={!!address}
               >
                 <Picker.Item label="Selecione o estado" value="" />
                 {brazilianStates.map((estado) => (
