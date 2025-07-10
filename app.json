@@ -25,7 +25,13 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "permissions": ["CAMERA", "MEDIA_LIBRARY"]
+      "permissions": [
+        "CAMERA",
+        "MEDIA_LIBRARY",
+        "CAMERA",
+        "MEDIA_LIBRARY"
+      ],
+      "package": "com.aryelp.restaurantapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"

@@ -6,6 +6,11 @@ export const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#fff',
   },
+   loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   input: {
     marginBottom: 16,
   },
